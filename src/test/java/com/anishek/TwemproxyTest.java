@@ -2,7 +2,9 @@ package com.anishek;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import redis.clients.jedis.BitOP;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -63,7 +65,43 @@ public class TwemproxyTest {
         assertThat(redis.hget(instanceTwoKey, "1"), is("3"));
     }
 
-    public void bitSetOperations() {
 
+    @Test
+    public void bitSetOperations() {
+        Pipeline pipelined = redis.pipelined();
+        pipelined.setbit(instanceTwoKey, 10, true);
+        pipelined.setbit(instanceOneKey, 10, true);
+
+        pipelined.setbit(instanceTwoKey, 100, true);
+        pipelined.setbit(instanceOneKey, 100, true);
+
+        pipelined.setbit(instanceTwoKey, 1, true);
+        pipelined.setbit(instanceOneKey, 1, true);
+
+        pipelined.setbit(instanceTwoKey, 113, true);
+        pipelined.setbit(instanceOneKey, 113, true);
+
+        pipelined.setbit(instanceTwoKey, 198, true);
+        pipelined.setbit(instanceOneKey, 198, true);
+
+        pipelined.sync();
+
+
+        assertThat(redis.bitcount(instanceOneKey), is(5l));
+        assertThat(redis.bitcount(instanceTwoKey), is(5l));
+
+        /**
+         * No bit operations supported on twemproxy
+         */
+        redis.bitop(BitOP.XOR, "result", instanceOneKey, instanceTwoKey);
+        assertThat(redis.bitcount("result"), is(0l));
+    }
+
+    @Test
+    @Ignore("Use this only to generate enough keys across instances")
+    public void generateKeys() {
+        for (int i = 0; i < 10000; i++) {
+            redis.set("anishek" + i, String.valueOf(i));
+        }
     }
 }
