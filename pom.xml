@@ -26,6 +26,18 @@
             <version>18.0</version>
         </dependency>
 
+        <!--
+            Backport bloom filter for Java 7 picked from: https://github.com/Crystark/Orestes-Bloomfilter
+            gradle -version ## 2.4
+            tag: 1.03-port-java7
+            build: gradle dist
+            archives in maven: gradle uploadArchives
+       -->
+        <dependency>
+            <groupId>com.baqend</groupId>
+            <artifactId>bloom-filter</artifactId>
+            <version>1.03-port-java7</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
