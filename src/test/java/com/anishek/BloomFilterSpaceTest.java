@@ -8,7 +8,7 @@ import redis.clients.jedis.Jedis;
 public class BloomFilterSpaceTest {
 
     @Test
-    public void runWithMillionKeys() {
+    public void populate() {
 
         int cardinality = Integer.parseInt(System.getProperty("cardinality"));
         String host = System.getProperty("host");
@@ -31,12 +31,18 @@ public class BloomFilterSpaceTest {
 
         System.out.println("After Clear:" + jedis.info("memory").split("\n")[2]);
 
+        int falsePositives = 0;
         int elements = (int) ((1 - falsePositiveRate) * cardinality);
         for (long i = 0; i < elements; i++) {
-            bf.add(i);
+            if (bf.contains(i)) {
+                falsePositives++;
+            } else {
+                bf.add(i);
+            }
         }
 
         System.out.println("After Inserting " + elements + " elements :" + jedis.info("memory").split("\n")[2]);
+        System.out.println("false positive : " + falsePositives + " cardinality : " + cardinality + " elements: " + elements);
 
         jedis.close();
     }
