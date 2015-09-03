@@ -5,6 +5,10 @@ import orestes.bloomfilter.FilterBuilder;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
+/**
+ * using the calculation on wiki for bloom
+ * for 100 million cardinality with 0.001 false positive per key bit space = 100000000 * 1.44 ln 1000 = looks like 120 MB
+ */
 public class BloomFilterSpaceTest {
 
     @Test
